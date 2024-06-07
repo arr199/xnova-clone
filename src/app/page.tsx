@@ -11,7 +11,7 @@ export default function Home(): JSX.Element {
 							<p className="border px-4 py-1 rounded">{mine.level}</p>
 						</div>
 						<button className="absolute right-2 bottom-2 bg-green-700 px-6 py-2 rounded hover:opacity-80 ">
-							Upgrade
+							Upgrade Mine
 						</button>
 					</div>
 				))}
