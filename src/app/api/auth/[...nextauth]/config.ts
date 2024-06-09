@@ -72,7 +72,7 @@ export const options: NextAuthConfig = {
 				.select()
 				.eq('email', token.email as string)
 				.select();
-
+			console.log('ERROR IN SESSION CALLBACK SUPABASE: ', error);
 			session.user.id = data?.[0]?.id ?? '';
 			return session;
 		}
