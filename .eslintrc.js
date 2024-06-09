@@ -22,6 +22,8 @@ module.exports = {
 	plugins: ['react'],
 	rules: {
 		'react/react-in-jsx-scope': 'off',
-		'@typescript-eslint/no-misused-promises': 'off'
+		'@typescript-eslint/no-misused-promises': 'off',
+		'@typescript-eslint/no-unnecessary-type-assertion': 'off',
+		'@typescript-eslint/non-nullable-type-assertion-style': 'off'
 	}
 };

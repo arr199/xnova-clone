@@ -1,7 +1,5 @@
 import { signInWithGithub, signInWithGoogle } from '@/auth/actions';
-import { revalidatePath } from 'next/cache';
 
-revalidatePath('/signin');
 export default async function Page(): Promise<JSX.Element> {
 	return (
 		<div className=" grid place-items-center w-full mt-10">
@@ -12,7 +10,7 @@ export default async function Page(): Promise<JSX.Element> {
 				<input type="password" />
 				<div className="flex flex-col gap-2 w-full items-start">
 					<button className="bg-green-500 py-1 mt-2  w-full">Sign In</button>
-					<span className='self-center'>OR</span>
+					<span className="self-center">OR</span>
 					<GithubButton />
 					<GoogleButton />
 				</div>
