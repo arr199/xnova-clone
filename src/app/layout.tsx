@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { Jua } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/header';
-import LeftNavbar from '@/components/leftNavbar/leftNavbar';
 import { AuthProvider } from '@/auth/authProvider';
 
 const jua = Jua({
@@ -23,13 +21,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<AuthProvider>
-				<body className={jua.className}>
-					<Header></Header>
-					<main className="flex w-full h-full  ">
-						<LeftNavbar></LeftNavbar>
-						{children}
-					</main>
-				</body>
+				<body className={jua.className}>{children}</body>
 			</AuthProvider>
 		</html>
 	);
