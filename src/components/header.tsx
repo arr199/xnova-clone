@@ -3,15 +3,8 @@ import { IoLogoTux } from 'react-icons/io';
 
 import { RESOURCES } from '../entities/resources';
 import Link from 'next/link';
-import { auth, signOut } from '@/auth/auth';
 
 export async function Header(): Promise<JSX.Element> {
-	const session = await auth();
-	// const resources = await getResources(session?.user?.id);
-	// console.log('HEADER COMPONENT RESOURCES :', resources);
-
-	console.log('HEADER COMPONENT SESSION :', session);
-
 	return (
 		<header className="grid p-5 border-b items-center grid-cols-3">
 			<div className="flex">
@@ -35,23 +28,18 @@ export async function Header(): Promise<JSX.Element> {
 			{/* AUTHENTICATION */}
 			<div className="flex items-end justify-self-end gap-4">
 				<div className="flex flex-col items-center gap-2">
-					<img className="w-10 rounded-full" src={session?.user?.image ?? ''} alt="" />
-					<span>{session?.user?.email}</span>
-					<span>{session?.user?.id}</span>
+					{/* <img className="w-10 rounded-full" src={session?.user?.image ?? ''} alt="" /> */}
+					{/* <span>{session?.user?.email}</span>
+					<span>{session?.user?.id}</span> */}
 				</div>
-				{session == null && (
-					<Link
-						href={'/api/auth/signin'}
-						className="bg-blue-400 text-white px-4 py-2 rounded-md">
-						Signin
-					</Link>
-				)}
 
-				<form
-					action={async () => {
-						'use server';
-						await signOut();
-					}}>
+				<Link
+					href={'/api/auth/signin'}
+					className="bg-blue-400 text-white px-4 py-2 rounded-md">
+					Signin
+				</Link>
+
+				<form>
 					<button className="bg-red-400 text-white px-4 py-2 rounded-md">Logout</button>
 				</form>
 			</div>

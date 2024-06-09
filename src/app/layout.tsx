@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Jua } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/auth/authProvider';
 
 const jua = Jua({
 	subsets: ['latin'],
@@ -20,9 +19,7 @@ export default function RootLayout({
 }>): JSX.Element {
 	return (
 		<html lang="en">
-			<AuthProvider>
-				<body className={jua.className}>{children}</body>
-			</AuthProvider>
+			<body className={jua.className}>{children}</body>
 		</html>
 	);
 }
