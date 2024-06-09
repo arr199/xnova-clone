@@ -5,10 +5,11 @@ export interface Resource {
 	id: number;
 	name: string;
 	icon: JSX.Element;
+	color: string;
 }
 
 export const RESOURCES = [
-	{ name: 'BTC', icon: FaBitcoin, color: 'orange-400' },
-	{ name: 'ETH', icon: FaEthereum, color: 'blue-400' },
-	{ name: 'USD', icon: FaDollarSign, color: 'green-400' }
+	{ name: 'BTC', icon: FaBitcoin, color: 'orange' },
+	{ name: 'ETH', icon: FaEthereum, color: 'skyBlue' },
+	{ name: 'USD', icon: FaDollarSign, color: 'green' }
 ];
