@@ -1,3 +1,6 @@
+import { signInWithCredentials } from '@/auth';
+import { redirect } from 'next/navigation';
+
 export default async function Page(): Promise<JSX.Element> {
 	return (
 		<div className=" grid place-items-center w-full mt-10">
@@ -29,9 +32,17 @@ function GoogleButton(): JSX.Element {
 	);
 }
 
-function CredentialsButton() {
+function CredentialsButton(): JSX.Element {
 	return (
-		<form className="flex flex-col">
+		<form
+			className="flex flex-col"
+			action={async f => {
+				'use server';
+				const result = await signInWithCredentials(f);
+				if (result === 'success') {
+					redirect('/home');
+				}
+			}}>
 			<label htmlFor="">Email</label>
 			<input name="username" className="text-black" />
 			<label htmlFor="">Password</label>

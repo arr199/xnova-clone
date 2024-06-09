@@ -1,10 +1,27 @@
+'use client';
 // ICONS
 import { IoLogoTux } from 'react-icons/io';
 
 import { RESOURCES } from '../entities/resources';
 import Link from 'next/link';
+import { redirect, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export async function Header(): Promise<JSX.Element> {
+export function Header(): JSX.Element {
+	const router = useRouter();
+
+	async function handleSignout() {
+		const res = await fetch('/api/auth/signout').catch(console.error);
+		const { success = null, error = null } = await res.json();
+		console.log(success);
+		console.log(error);
+		if (success) {
+			router.push('/');
+		}
+	}
+
+	useEffect(() => {}, []);
+
 	return (
 		<header className="grid p-5 border-b items-center grid-cols-3">
 			<div className="flex">
@@ -28,6 +45,7 @@ export async function Header(): Promise<JSX.Element> {
 			{/* AUTHENTICATION */}
 			<div className="flex items-end justify-self-end gap-4">
 				<div className="flex flex-col items-center gap-2">
+					{JSON.stringify('session')}
 					{/* <img className="w-10 rounded-full" src={session?.user?.image ?? ''} alt="" /> */}
 					{/* <span>{session?.user?.email}</span>
 					<span>{session?.user?.id}</span> */}
@@ -39,9 +57,11 @@ export async function Header(): Promise<JSX.Element> {
 					Signin
 				</Link>
 
-				<form>
-					<button className="bg-red-400 text-white px-4 py-2 rounded-md">Logout</button>
-				</form>
+				<button
+					onClick={handleSignout}
+					className="bg-red-400 text-white px-4 py-2 rounded-md">
+					Logout
+				</button>
 			</div>
 		</header>
 	);
