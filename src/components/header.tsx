@@ -2,8 +2,16 @@
 import { IoLogoTux } from 'react-icons/io';
 
 import { RESOURCES } from '../entities/resources';
+import Link from 'next/link';
+import { auth, signOut } from '@/auth/auth';
 
-export function Header(): JSX.Element {
+export async function Header(): Promise<JSX.Element> {
+	const session = await auth();
+	// const resources = await getResources(session?.user?.id);
+	// console.log('HEADER COMPONENT RESOURCES :', resources);
+
+	console.log('HEADER COMPONENT SESSION :', session);
+
 	return (
 		<header className="grid p-5 border-b items-center grid-cols-3">
 			<div className="flex">
@@ -15,7 +23,9 @@ export function Header(): JSX.Element {
 				{RESOURCES.map((resource, index) => (
 					<div className="flex flex-col gap-2 items-center" key={index}>
 						<div className="flex items-center gap-2">
-							<resource.icon className={`w-6 h-6 text-${resource.color}`}></resource.icon>
+							<resource.icon
+								color={`${resource.color}`}
+								className={`w-6 h-6`}></resource.icon>
 							<span className="text-white">{resource.name}</span>
 						</div>
 						<span className="text-[#3a9756]">123</span>
@@ -23,8 +33,27 @@ export function Header(): JSX.Element {
 				))}
 			</div>
 			{/* AUTHENTICATION */}
-			<div className="justify-self-end">
-				<button className="bg-blue-400 text-white px-4 py-2 rounded-md">Login</button>
+			<div className="flex items-end justify-self-end gap-4">
+				<div className="flex flex-col items-center gap-2">
+					<img className="w-10 rounded-full" src={session?.user?.image ?? ''} alt="" />
+					<span>{session?.user?.email}</span>
+					<span>{session?.user?.id}</span>
+				</div>
+				{session == null && (
+					<Link
+						href={'/api/auth/signin'}
+						className="bg-blue-400 text-white px-4 py-2 rounded-md">
+						Signin
+					</Link>
+				)}
+
+				<form
+					action={async () => {
+						'use server';
+						await signOut();
+					}}>
+					<button className="bg-red-400 text-white px-4 py-2 rounded-md">Logout</button>
+				</form>
 			</div>
 		</header>
 	);
