@@ -4,23 +4,18 @@ import { IoLogoTux } from 'react-icons/io';
 
 import { RESOURCES } from '../entities/resources';
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useAuth } from '@/hooks/useSession';
 
 export function Header(): JSX.Element {
 	const router = useRouter();
+	const { session, user, signOut } = useAuth();
 
 	async function handleSignout() {
-		const res = await fetch('/api/auth/signout').catch(console.error);
-		const { success = null, error = null } = await res.json();
-		console.log(success);
-		console.log(error);
-		if (success) {
-			router.push('/');
-		}
+		signOut();
+		router.push('/');
 	}
-
-	useEffect(() => {}, []);
 
 	return (
 		<header className="grid p-5 border-b items-center grid-cols-3">
@@ -45,7 +40,7 @@ export function Header(): JSX.Element {
 			{/* AUTHENTICATION */}
 			<div className="flex items-end justify-self-end gap-4">
 				<div className="flex flex-col items-center gap-2">
-					{JSON.stringify('session')}
+					<p className="w-40  break-words ">{JSON.stringify(session)}</p>
 					{/* <img className="w-10 rounded-full" src={session?.user?.image ?? ''} alt="" /> */}
 					{/* <span>{session?.user?.email}</span>
 					<span>{session?.user?.id}</span> */}
