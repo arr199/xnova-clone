@@ -12,7 +12,7 @@ export async function signInWithCredentials(formdata: FormData): Promise<any> {
 
 	// CREATE THE SESSION
 	const id = '1';
-	const expires = new Date(Date.now() + 1000 * 100);
+	const expires = new Date(Date.now() + 1000 * 1000);
 
 	const session = { user: { username, id, expires } };
 	const jwtSession = jwt.sign(session, process.env.JWT_SECRET ?? '', {
@@ -30,3 +30,4 @@ export function getSession(): any {
 export function signOut(): void {
 	cookies().set('session', '', { expires: new Date(0) });
 }
+
