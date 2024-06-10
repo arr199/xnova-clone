@@ -5,19 +5,27 @@ import jwt from 'jsonwebtoken';
 
 async function handler(req: NextRequest): Promise<NextResponse> {
 	unstable_noStore();
+	// GET THE SESSION TOKEN
+	const sessionToken = cookies().get('session')?.value ?? '';
+	console.log(sessionToken);
 
-	// get the route
+	// GET AUTH ENDPOINT
 	const url = req.url.split('/').at(-1);
-	if (url === 'signout') {
+	if (url === 'signOut') {
 		cookies().set('session', '', { expires: new Date(0) });
-		return NextResponse.json({ success: 'Signout successful' });
+		return NextResponse.json<AuthResponse>({ success: 'Signout successful' });
 	}
 	if (url === 'getUser') {
-		const session = jwt.decode(cookies().get('session') as string, { complete: true });
-
-		return NextResponse.json({ session });
+		const session = jwt.verify(sessionToken, process.env.JWT_SECRET ?? '');
+		return NextResponse.json<AuthResponse>({ data: session, success: 'User found' });
 	}
 	return NextResponse.json({ error: 'Invalid route' });
 }
 
 export { handler as GET, handler as POST };
+
+interface AuthResponse {
+	data?: any;
+	success?: string;
+	error?: string;
+}
