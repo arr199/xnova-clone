@@ -11,8 +11,6 @@ export default function middleware(req: NextRequest): any {
 	if (session !== null && req.nextUrl.pathname === '/signin') {
 		return NextResponse.redirect(new URL('/', req.nextUrl.origin));
 	}
-
-	console.log('MIDDLEWARE');
 }
 
 export const config = {
