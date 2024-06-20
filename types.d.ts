@@ -4,7 +4,7 @@ interface Session {
 }
 
 interface User {
-	username: string;
+	email: string;
 	id: string;
 	expires: Date;
 }
