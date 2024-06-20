@@ -3,13 +3,16 @@ import { NextResponse, type NextRequest } from 'next/server';
 export default function middleware(req: NextRequest): any {
 	console.log('MIDDLEWARE');
 	const session = req.cookies.get('session') ?? null;
+	const authUrls = ['/signin', '/signup', '/signIn'];
 
-	if (session === null && req.nextUrl.pathname !== '/signin') {
+	if (session === null && !authUrls.includes(req.nextUrl.pathname)) {
+		console.log('HERE');
 		return NextResponse.redirect(new URL('/signin', req.nextUrl.origin));
 	}
 
-	if (session !== null && req.nextUrl.pathname === '/signin') {
-		return NextResponse.redirect(new URL('/', req.nextUrl.origin));
+	if (session !== null && authUrls.includes(req.nextUrl.pathname)) {
+		console.log('REDIRECTING TO HOME');
+		return NextResponse.redirect(new URL('/home', req.nextUrl.origin));
 	}
 }
 
