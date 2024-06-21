@@ -8,3 +8,10 @@ export const ERROR = {
 	USER_NOT_FOUND: 'User not found',
 	SERVER_ERROR: 'Server error'
 };
+
+export class ValidationError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'ValidationError';
+	}
+}
