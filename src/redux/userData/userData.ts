@@ -1,7 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { SafeFieldsFromUsersTable } from '../../../types';
 
-const intialState: SafeFieldsFromUsersTable = {
+interface ExtraData {
+	loading: boolean;
+	dataIsReady: boolean;
+}
+
+const intialState: SafeFieldsFromUsersTable & ExtraData = {
 	btc_amount: 0,
 	btc_level: 0,
 	btc_rate: 0,
@@ -16,7 +21,9 @@ const intialState: SafeFieldsFromUsersTable = {
 	usd_level: 0,
 	usd_rate: 0,
 	usd_upgrade_cost: 0,
-	email: ''
+	email: '',
+	loading: false,
+	dataIsReady: false
 };
 
 const userData = createSlice({
@@ -28,20 +35,26 @@ const userData = createSlice({
 		}
 	},
 	extraReducers: builder => {
-		builder.addCase(fetchUserData.fulfilled, (state, { payload }) => {
-			console.log('FULFILLED');
-			console.log(payload);
+		builder
+			.addCase(fetchUserData.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(fetchUserData.fulfilled, (state, { payload }) => {
+				console.log('FULFILLED');
+				console.log(payload);
 
-			state = payload;
-			return state;
-		});
+				state = payload;
+				state.loading = false;
+				state.dataIsReady = true;
+				return state;
+			});
 	}
 });
 
 export const fetchUserData = createAsyncThunk('userData/fetchUserData', async () => {
 	try {
 		console.log('FETCHING USER DATA');
-		const response = await fetch('/api/getUserData');
+		const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/getUserData`);
 		const data = await response.json();
 		return data;
 	} catch (error) {
