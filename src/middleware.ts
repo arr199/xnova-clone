@@ -5,14 +5,14 @@ export default function middleware(req: NextRequest): any {
 	const session = req.cookies.get('session') ?? null;
 	const authUrls = ['/signin', '/signup', '/signIn'];
 
-	if (session === null && !authUrls.includes(req.nextUrl.pathname)) {
-		console.log('HERE');
-		return NextResponse.redirect(new URL('/signin', req.nextUrl.origin));
+	if (session !== null && [...authUrls, '/'].includes(req.nextUrl.pathname)) {
+		console.log('REDIRECTING TO HOME');
+		return NextResponse.redirect(new URL('/home', req.url));
 	}
 
-	if (session !== null && authUrls.includes(req.nextUrl.pathname)) {
-		console.log('REDIRECTING TO HOME');
-		return NextResponse.redirect(new URL('/home', req.nextUrl.origin));
+	if (session === null && !authUrls.includes(req.nextUrl.pathname)) {
+		console.log('HERE');
+		return NextResponse.redirect(new URL('/signin', req.url));
 	}
 }
 
