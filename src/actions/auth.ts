@@ -2,19 +2,15 @@
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../supabase/client';
-import { ERROR } from './errors';
+import { ERROR } from '../utils/errors';
 import bcrypt from 'bcrypt';
-import { NextResponse } from 'next/server';
 
 export interface signInWithCredentialsResponse {
 	error?: string;
 	success?: string;
 }
 
-export async function signInWithCredentials(
-	prevState: FormData,
-	formdata: FormData
-): Promise<signInWithCredentialsResponse> {
+export async function signInWithCredentials(prevState: FormData, formdata: FormData): Promise<any> {
 	const { email, password } = Object.fromEntries(formdata) as Record<string, string>;
 
 	if (email === null || password === null) {
@@ -31,6 +27,7 @@ export async function signInWithCredentials(
 	}
 
 	try {
+		// GET THE USER IN THE DATABASE
 		const { data, error } = await supabase.from('users').select('*').eq('email', email);
 
 		if (error !== null) {
@@ -62,8 +59,11 @@ export async function signInWithCredentials(
 	}
 }
 
-export async function signUpWithCredentials(formdata: FormData): Promise<any> {
-	const { email, password } = Object.fromEntries(formdata) as Record<string, string>;
+export async function signUpWithCredentials(prevState: FormData, formdata: FormData): Promise<any> {
+	const { email = null, password = null } = Object?.fromEntries(formdata) as Record<
+		string,
+		string
+	>;
 
 	if (email === null || password === null) {
 		return { error: ERROR.INVALID_CREDENTIALS };
@@ -83,13 +83,16 @@ export async function signUpWithCredentials(formdata: FormData): Promise<any> {
 		const { data, error } = await supabase.from('users').select('*').eq('email', email);
 
 		if (error !== null) {
+			console.log(error);
 			return { error: ERROR.SERVER_ERROR };
 		}
 
 		if (data?.length > 0) {
+			console.log(data);
 			return { error: ERROR.EMAIL_EXISTS };
 		}
 	} catch (error) {
+		console.log(error);
 		return { error: ERROR.SERVER_ERROR };
 	}
 
@@ -101,11 +104,13 @@ export async function signUpWithCredentials(formdata: FormData): Promise<any> {
 		const { error } = await supabase.from('users').insert({ email, password: hashedPassword });
 
 		if (error !== null) {
+			console.log(error);
 			return { error: ERROR.SERVER_ERROR };
 		}
 
-		return NextResponse.redirect('/signin');
+		return { success: 'success' };
 	} catch (error) {
+		console.log(error);
 		return { error: ERROR.SERVER_ERROR };
 	}
 }
