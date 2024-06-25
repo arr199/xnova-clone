@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { Session, User } from '../../types';
 
 export function useAuth(): any {
 	const [session, setSession] = useState<Session | null>(null);
