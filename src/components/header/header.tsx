@@ -3,31 +3,25 @@
 import { IoLogoTux } from 'react-icons/io';
 
 import { RESOURCES } from '../../entities/resources';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useSession';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import { Skeleton } from '../shared/skeleton';
 import { Amount } from './amount';
+import { Button } from '../ui/button';
 
 export function Header(): JSX.Element {
-	const {
-		btc_amount,
-		btc_rate,
-		eth_amount,
-		eth_rate,
-		usd_amount,
-		usd_rate,
-		loading,
-		dataIsReady
-	} = useSelector((state: RootState) => state.userData);
+	const { btc_amount, btc_rate, eth_amount, eth_rate, usd_amount, usd_rate, loading, dataIsReady } = useSelector(
+		(state: RootState) => state.userData
+	);
 	const router = useRouter();
+
 	const { session, signOut } = useAuth();
 
-	async function handleSignout(): Promise<void> {
-		signOut();
-		router.push('/');
+	async function handleSignOut(): Promise<void> {
+		await signOut();
+		router.refresh();
 	}
 
 	return (
@@ -43,31 +37,26 @@ export function Header(): JSX.Element {
 						resource.type === 'btc'
 							? btc_amount
 							: resource.type === 'eth'
-							? eth_amount
-							: resource.type === 'usd'
-							? usd_amount
-							: 0;
+								? eth_amount
+								: resource.type === 'usd'
+									? usd_amount
+									: 0;
 
 					const rate =
 						resource.type === 'btc'
 							? btc_rate
 							: resource.type === 'eth'
-							? eth_rate
-							: resource.type === 'usd'
-							? usd_rate
-							: 0;
+								? eth_rate
+								: resource.type === 'usd'
+									? usd_rate
+									: 0;
 
 					return (
-						<div
-							className="flex flex-col gap-2 items-center relative  h-10 w-max px-4"
-							key={index}>
+						<div className="flex  gap-2 items-center relative  h-10 w-max px-4" key={index}>
 							<div className="flex items-center gap-2">
-								<resource.icon
-									color={`${resource.color}`}
-									className={`w-6 h-6`}></resource.icon>
-								<span className="text-white">{resource.label}</span>
+								<resource.icon color={`${resource.color}`} className={`w-6 h-6 `}></resource.icon>
 							</div>
-							<div className="text-[#3a9756]  absolute bottom-0 leading-[0]">
+							<div className="text-[#3a9756]   bottom-0 leading-[0]">
 								{!dataIsReady ?? loading ? (
 									<Skeleton className=" h-2 w-10 rounded-md"></Skeleton>
 								) : (
@@ -83,16 +72,9 @@ export function Header(): JSX.Element {
 				<div className="flex flex-col items-center gap-2">
 					<span> {session !== null ? session?.email : ''}</span>
 				</div>
-				<Link
-					href={'/api/auth/signin'}
-					className="bg-blue-400 text-white px-4 py-2 rounded-md">
-					Signin
-				</Link>
-				<button
-					onClick={handleSignout}
-					className="bg-red-400 text-white px-4 py-2 rounded-md">
+				<Button variant="destructive" onClick={handleSignOut} className="font-bold">
 					Logout
-				</button>
+				</Button>
 			</div>
 		</header>
 	);

@@ -1,4 +1,4 @@
-import { Header } from '@/components/header';
+import { Header } from '@/components/header/header';
 import LeftNavbar from '@/components/leftNavbar/leftNavbar';
 import React from 'react';
 

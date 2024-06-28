@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
-import { Jua } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import { ReduxProvider } from '@/redux/provider';
+import { ThemeProvider } from '@/components/providers/themeProvider';
 
-const jua = Jua({
+const inter = Inter({
 	subsets: ['latin'],
 	weight: '400'
 });
@@ -19,7 +21,13 @@ export default function RootLayout({
 }>): JSX.Element {
 	return (
 		<html lang="en">
-			<body className={jua.className}>{children}</body>
+			<ReduxProvider>
+				<body className={inter.className}>
+					<ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+						{children}
+					</ThemeProvider>
+				</body>
+			</ReduxProvider>
 		</html>
 	);
 }

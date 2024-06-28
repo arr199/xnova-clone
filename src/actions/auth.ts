@@ -11,6 +11,7 @@ export interface signInWithCredentialsResponse {
 }
 
 export async function signInWithCredentials(prevState: FormData, formdata: FormData): Promise<any> {
+	console.log('SIGN IN WITH CREDENTIALS');
 	const { email, password } = Object.fromEntries(formdata) as Record<string, string>;
 
 	if (email === null || password === null) {
@@ -60,10 +61,7 @@ export async function signInWithCredentials(prevState: FormData, formdata: FormD
 }
 
 export async function signUpWithCredentials(prevState: FormData, formdata: FormData): Promise<any> {
-	const { email = null, password = null } = Object?.fromEntries(formdata) as Record<
-		string,
-		string
-	>;
+	const { email = null, password = null } = Object?.fromEntries(formdata) as Record<string, string>;
 
 	if (email === null || password === null) {
 		return { error: ERROR.INVALID_CREDENTIALS };

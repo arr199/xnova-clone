@@ -18,8 +18,8 @@ export function useAuth(): any {
 		getUser().then().catch(console.error);
 	}, []);
 
-	function signOut(): void {
-		fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/signOut`).then().catch(console.error);
+	async function signOut(): Promise<void> {
+		await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/signOut`).then().catch(console.error);
 		setSession(null);
 		setUser(null);
 	}

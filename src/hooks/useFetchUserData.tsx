@@ -1,4 +1,4 @@
-import { ERROR } from '@/auth/errors';
+import { ERROR } from '@/utils/errors';
 import { useEffect, useState } from 'react';
 import type { Database } from '../../database.types';
 
