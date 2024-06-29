@@ -28,7 +28,6 @@ export function Header(): JSX.Element {
 		<header className="grid p-5 border-b items-center grid-cols-3">
 			<div className="flex">
 				<IoLogoTux className="w-10 h-10"></IoLogoTux>
-				<h1 className="ml-4 text-4xl text-white">Xnova Clone</h1>
 			</div>
 			{/* RESOURCES */}
 			<div className="flex gap-12  justify-self-center">
@@ -72,7 +71,7 @@ export function Header(): JSX.Element {
 				<div className="flex flex-col items-center gap-2">
 					<span> {session !== null ? session?.email : ''}</span>
 				</div>
-				<Button variant="destructive" onClick={handleSignOut} className="font-bold">
+				<Button variant={"default"} onClick={handleSignOut} className="font-bold  dark:bg-red-500">
 					Logout
 				</Button>
 			</div>

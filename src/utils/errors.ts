@@ -12,6 +12,13 @@ export const ERROR = {
 export class ValidationError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'ValidationError';
+		this.name = message;
+	}
+}
+
+export class ServerError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = message;
 	}
 }

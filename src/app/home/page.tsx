@@ -2,16 +2,15 @@
 
 import { MINES } from '@/entities/mines';
 import type { MineType } from '@/entities/mines';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '@/redux/store';
 import { fetchUserData } from '@/redux/slices/userData';
 import { useEffect } from 'react';
 import { useFetchNumber } from '@/hooks/useFetchNumber';
 import { MineCard } from '@/components/minesPage/mineCard';
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore';
 
 export default function Home(): JSX.Element {
-	const dispatch = useDispatch<AppDispatch>();
-	const data = useSelector((state: RootState) => state.userData);
+	const dispatch = useAppDispatch();
+	const data = useAppSelector(state => state.userData);
 	const { handleFetchNumber } = useFetchNumber();
 
 	useEffect(() => {
@@ -39,7 +38,7 @@ export default function Home(): JSX.Element {
 					return (
 						<MineCard
 							imgSrc={mine.image}
-						    type={mine.type}
+							type={mine.type}
 							level={mine.level}
 							rate={rate}
 							label={mine.label}

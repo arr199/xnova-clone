@@ -24,7 +24,7 @@ export function MineCard({
 	handleUpgradeMine
 }: MineProps): JSX.Element {
 	return (
-		<Card className="w-full max-w-sm">
+		<Card className="w-full max-w-sm ">
 			<img src={imgSrc} alt="Mine image" className="rounded-t-lg object-cover w-full aspect-[3/2]" />
 			<CardContent className="p-6 space-y-4">
 				<div className="flex items-center justify-between">

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Input } from '@/components/shared/input';
 import { Button } from '@/components/ui/button';
 
-import { signInWithCredentials } from '@/actions/auth';
+import { type signInWithCredentialsResponse, signInWithCredentials } from '@/actions/auth';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -24,10 +24,15 @@ const jua = Jua({
 export default function Page(): JSX.Element {
 	const router = useRouter();
 	const formRef = useRef<HTMLFormElement | null>(null);
-	const [state, formAction] = useFormState(signInWithCredentials, {
-		error: '',
-		success: ''
-	});
+	const [state, formAction] = useFormState(
+		async (prev: signInWithCredentialsResponse, next: FormData): Promise<any> => {
+			await signInWithCredentials(prev, next);
+		},
+		{
+			error: '',
+			success: ''
+		}
+	);
 
 	const {
 		register,
@@ -36,6 +41,7 @@ export default function Page(): JSX.Element {
 	} = useForm({ resolver: zodResolver(userSchema) });
 
 	useEffect(() => {
+		console.log(state);
 		if (state?.success === 'success') {
 			router.push('/home');
 		}
@@ -69,6 +75,7 @@ export default function Page(): JSX.Element {
 								error={(errors?.password?.message as string) ?? ''}
 								label="Password"
 								type="password"></Input>
+							{state?.error !== undefined && <div className="text-red-500">{state?.error}</div>}
 
 							<Button className="mt-4  " type="submit">
 								{isLoading ? 'Verifying...' : 'Sign in'}
