@@ -26,7 +26,7 @@ export default function Page(): JSX.Element {
 	const formRef = useRef<HTMLFormElement | null>(null);
 	const [state, formAction] = useFormState(
 		async (prev: signInWithCredentialsResponse, next: FormData): Promise<any> => {
-			await signInWithCredentials(prev, next);
+			return await signInWithCredentials(prev, next);
 		},
 		{
 			error: '',
@@ -47,6 +47,8 @@ export default function Page(): JSX.Element {
 		}
 	}, [state]);
 
+	console.log(state);
+
 	return (
 		<main className={jua.className}>
 			<div className=" grid place-items-center  w-[400px] mx-auto ">
@@ -60,7 +62,7 @@ export default function Page(): JSX.Element {
 							onSubmit={async e => {
 								e.preventDefault();
 								await handleSubmit(() => {
-									if (formRef.current !== null) formAction(new FormData(formRef.current));
+									 if (formRef.current !== null) formAction(new FormData(formRef.current));
 								})(e);
 							}}>
 							<Input

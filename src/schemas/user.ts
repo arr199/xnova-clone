@@ -18,7 +18,7 @@ export const userSchema = z.object({
 		.pipe(
 			z
 				.string()
-				.min(1, { message: 'password can not be empty' })
-				.max(10, { message: 'Password must be between 1 and 10 characters' })
+				.min(1, { message: 'Password must be between 1 and 20 characters' })
+				.max(20, { message: 'Password must be between 1 and 20 characters' })
 		)
 });

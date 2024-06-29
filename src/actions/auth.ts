@@ -4,8 +4,13 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../supabase/client';
 import { ERROR, ServerError, ValidationError } from '../utils/errors';
 import bcrypt from 'bcrypt';
+import { userSchema } from '@/schemas/user';
 
 export interface signInWithCredentialsResponse {
+	error?: string;
+	success?: string;
+}
+export interface signUpWithCredentialsResponse {
 	error?: string;
 	success?: string;
 }
@@ -15,21 +20,12 @@ export async function signInWithCredentials(
 	formData: FormData
 ): Promise<signInWithCredentialsResponse> {
 	console.log('SIGN IN WITH CREDENTIALS');
-
 	const { email, password } = Object.fromEntries(formData) as Record<string, string>;
 
 	try {
-		// IMPLEMENT ZOD VALIDATIONS
-		if (email === null || password === null) {
-			throw new ValidationError(ERROR.INVALID_CREDENTIALS);
-		}
+		const fieldsData = userSchema.safeParse({ email, password });
 
-		//  VALIDATE INPUT
-		if (typeof email !== 'string' && String(email).length > 30) {
-			throw new ValidationError(ERROR.INVALID_CREDENTIALS);
-		}
-
-		if (typeof password !== 'string' && String(password).length > 30) {
+		if (!fieldsData.success) {
 			throw new ValidationError(ERROR.INVALID_CREDENTIALS);
 		}
 
@@ -67,8 +63,16 @@ export async function signInWithCredentials(
 	}
 }
 
-export async function signUpWithCredentials(prevState: FormData, formData: FormData): Promise<any> {
+export async function signUpWithCredentials(
+	prevState: signUpWithCredentialsResponse,
+	formData: FormData
+): Promise<signUpWithCredentialsResponse> {
 	const { email = null, password = null } = Object?.fromEntries(formData) as Record<string, string>;
+
+	// delay 1 sec
+	await new Promise(resolve => setTimeout(resolve, 2000));
+	try {
+	throw new ValidationError(ERROR.INVALID_CREDENTIALS);
 
 	if (email === null || password === null) {
 		return { error: ERROR.INVALID_CREDENTIALS };
@@ -84,7 +88,7 @@ export async function signUpWithCredentials(prevState: FormData, formData: FormD
 	}
 
 	// CHECK IF EMAIL EXISTS
-	try {
+
 		const { data, error } = await supabase.from('users').select('*').eq('email', email);
 
 		if (error !== null) {
