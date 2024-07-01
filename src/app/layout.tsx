@@ -4,6 +4,8 @@ import './globals.css';
 import { ReduxProvider } from '@/redux/provider';
 import { ThemeProvider } from '@/components/providers/themeProvider';
 
+import { Toaster } from '@/components/ui/sonner';
+
 const inter = Inter({
 	subsets: ['latin'],
 	weight: '400'
@@ -26,6 +28,7 @@ export default function RootLayout({
 					<ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
 						{children}
 					</ThemeProvider>
+					<Toaster />
 				</body>
 			</ReduxProvider>
 		</html>
