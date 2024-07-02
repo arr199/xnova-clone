@@ -5,6 +5,8 @@ import { supabase } from '../supabase/client';
 import { ERROR, ServerError, ValidationError } from '../utils/errors';
 import bcrypt from 'bcrypt';
 import { userSchema } from '@/schemas/user';
+import { RedirectType, redirect } from 'next/navigation';
+import { url } from 'inspector';
 
 export interface signInWithCredentialsResponse {
 	error?: string;
@@ -16,13 +18,14 @@ export interface signUpWithCredentialsResponse {
 }
 
 export async function signInWithCredentials(
-	prevState: signInWithCredentialsResponse,
+	_: signInWithCredentialsResponse,
 	formData: FormData
 ): Promise<signInWithCredentialsResponse> {
 	console.log('SIGN IN WITH CREDENTIALS');
 	const { email, password } = Object.fromEntries(formData) as Record<string, string>;
 
 	try {
+		// FIELDS VALIDATION WITH ZOD
 		const fieldsData = userSchema.safeParse({ email, password });
 
 		if (!fieldsData.success) {
@@ -64,63 +67,53 @@ export async function signInWithCredentials(
 }
 
 export async function signUpWithCredentials(
-	prevState: signUpWithCredentialsResponse,
+	_: signUpWithCredentialsResponse,
 	formData: FormData
 ): Promise<signUpWithCredentialsResponse> {
 	const { email = null, password = null } = Object?.fromEntries(formData) as Record<string, string>;
 
-	// delay 1 sec
+	// delay 2 sec
 	await new Promise(resolve => setTimeout(resolve, 2000));
 	try {
-	throw new ValidationError(ERROR.INVALID_CREDENTIALS);
+		const fieldsData = userSchema.safeParse({ email, password });
 
-	if (email === null || password === null) {
-		return { error: ERROR.INVALID_CREDENTIALS };
-	}
+		if (!fieldsData.success) {
+			throw new ValidationError(ERROR.INVALID_CREDENTIALS);
+		}
 
-	//  VALIDATE INPUT
-	if (typeof email !== 'string' && String(email).length > 30) {
-		return { error: ERROR.INVALID_EMAIL };
-	}
-
-	if (typeof password !== 'string' && String(password).length > 30) {
-		return { error: ERROR.INVALID_PASSWORD };
-	}
-
-	// CHECK IF EMAIL EXISTS
-
-		const { data, error } = await supabase.from('users').select('*').eq('email', email);
+		// CHECK IF EMAIL EXISTS
+		const { data, error } = await supabase
+			.from('users')
+			.select('email')
+			.eq('email', email as string);
 
 		if (error !== null) {
 			console.log(error);
-			return { error: ERROR.SERVER_ERROR };
+			throw new ServerError(ERROR.SERVER_ERROR);
 		}
 
 		if (data?.length > 0) {
 			console.log(data);
-			return { error: ERROR.EMAIL_EXISTS };
+			throw new ValidationError(ERROR.EMAIL_EXISTS);
 		}
-	} catch (error) {
-		console.log(error);
-		return { error: ERROR.SERVER_ERROR };
-	}
 
-	// INSERT USER
-	const saltRounds = 10;
-	const hashedPassword = await bcrypt.hash(password, saltRounds);
+		// INSERT USER
 
-	try {
-		const { error } = await supabase.from('users').insert({ email, password: hashedPassword });
+		const saltRounds = 10;
+		const hashedPassword = await bcrypt.hash(password as string, saltRounds);
+		const { error: insertError } = await supabase
+			.from('users')
+			.insert({ email: email as string, password: hashedPassword });
 
-		if (error !== null) {
-			console.log(error);
-			return { error: ERROR.SERVER_ERROR };
+		if (insertError !== null) {
+			console.log(insertError);
+			throw new ServerError(ERROR.ERROR_CREATING_USER);
 		}
 
 		return { success: 'success' };
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
-		return { error: ERROR.SERVER_ERROR };
+		return { error: error.message };
 	}
 }
 
@@ -131,4 +124,18 @@ export async function getSession(): Promise<any> {
 
 export async function signOut(): Promise<void> {
 	cookies().set('session', '', { expires: new Date(0) });
+}
+
+export async function signInWithGoogle(): Promise<any> {
+	// Google's OAuth 2.0 endpoint for requesting an access token
+	console.log('SIGN IN WITH GOOGLE');
+
+	const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+	url.searchParams.append('client_id', process.env.GOOGLE_ID ?? '');
+	url.searchParams.append('redirect_uri', process.env.GOOGLE_REDIRECT_URI ?? '');
+	url.searchParams.append('response_type', 'token');
+	url.searchParams.append('scope', 'https://www.googleapis.com/auth/drive.metadata.readonly');
+	// url.searchParams.append('include_granted_scopes', 'true');
+	// url.searchParams.append('state', 'pass-throughvalue');
+	redirect(url.toString(), RedirectType.push);
 }
