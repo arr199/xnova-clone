@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { Input } from '@/components/shared/input';
 import { Button } from '@/components/ui/button';
 
-import { type signInWithCredentialsResponse, signInWithCredentials } from '@/actions/auth';
-import { useFormState } from 'react-dom';
+import { type signInWithCredentialsResponse, signInWithCredentials, signInWithGoogle } from '@/actions/auth';
+import { useFormState, useFormStatus } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -15,6 +15,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { userSchema } from '@/schemas/user';
 
 import { Jua } from 'next/font/google';
+import { FaSpinner } from 'react-icons/fa';
+import { toast } from 'sonner';
 
 const jua = Jua({
 	subsets: ['latin'],
@@ -37,13 +39,21 @@ export default function Page(): JSX.Element {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isLoading }
+		formState: { errors }
 	} = useForm({ resolver: zodResolver(userSchema) });
 
 	useEffect(() => {
 		console.log(state);
 		if (state?.success === 'success') {
 			router.push('/home');
+		} else if (state.error !== '') {
+			toast.error((state?.error as string) ?? 'Server Error', {
+				duration: 3000,
+				position: 'top-center',
+				style: {
+					color: 'red'
+				}
+			});
 		}
 	}, [state]);
 
@@ -57,14 +67,12 @@ export default function Page(): JSX.Element {
 						<h1 className="text-3xl self-center mb-6 ">Sign In</h1>
 						<form
 							ref={formRef}
-							action={formAction}
-							className="flex flex-col w-full "
-							onSubmit={async e => {
-								e.preventDefault();
+							action={async () => {
 								await handleSubmit(() => {
-									 if (formRef.current !== null) formAction(new FormData(formRef.current));
-								})(e);
-							}}>
+									if (formRef.current !== null) formAction(new FormData(formRef.current));
+								})();
+							}}
+							className="flex flex-col w-full ">
 							<Input
 								register={register}
 								error={(errors?.email?.message as string) ?? ''}
@@ -77,16 +85,19 @@ export default function Page(): JSX.Element {
 								error={(errors?.password?.message as string) ?? ''}
 								label="Password"
 								type="password"></Input>
-							{state?.error !== undefined && <div className="text-red-500">{state?.error}</div>}
 
-							<Button className="mt-4  " type="submit">
-								{isLoading ? 'Verifying...' : 'Sign in'}
-							</Button>
+							<SignInWithCredentials />
 						</form>
 						{/* <CredentialsButton /> */}
 						<span className="self-center">-- OR --</span>
 						<Button className=" w-full">Sign in with Github</Button>
-						<Button className="w-full mt-2 ">Sign in with Google</Button>
+						<Button
+							onClick={async () => {
+								await signInWithGoogle();
+							}}
+							className="w-full mt-2 ">
+							Sign in with Google
+						</Button>
 						<Link href={'/signup'} className="mt-6 ">
 							Do not have an account? <span className="text-green-500 hover:underline">Sign up.</span>
 						</Link>
@@ -94,5 +105,15 @@ export default function Page(): JSX.Element {
 				</div>
 			</div>
 		</main>
+	);
+}
+
+function SignInWithCredentials(): JSX.Element {
+	const { pending } = useFormStatus();
+	return (
+		<Button disabled={pending} className="mt-4" type="submit">
+			{pending ? 'Verifying...' : 'Sign in'}
+			{pending ? <FaSpinner className=" ml-2 animate-spin"></FaSpinner> : null}
+		</Button>
 	);
 }
